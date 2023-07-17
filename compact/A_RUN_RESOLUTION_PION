@@ -1,0 +1,50 @@
+#!/bin/bash
+# S.Chekanov. Process resolution plots and make histograms
+# Example:
+# from .x Resolution.C(1000,"output/DualTestBeam_1gev_e-_1000evt.root",1,"histos/hito_e-_1gev.root");
+
+# source ./particles.sh
+
+# define particles here 
+particle[1]="pi-"
+
+Nparticles=${#particle[@]}
+echo "Nr of particles = $Nparticles"
+
+n=1
+#------------------------------ start loop ----------------------------
+while  [ $n -le $Nparticles ]
+do
+  MPart=${particle[$n]}
+  echo "Run for particle ${MPart}"
+
+#  cmd="Resolution.C(2400,\"output/DualTestBeam_0.5gev_${MPart}.root\",0.5,\"histos/hist_${MPart}_0.5gev.root\")"
+#  root -q $cmd
+
+#  cmd="Resolution.C(2400,\"output/DualTestBeam_1gev_${MPart}.root\",1,\"histos/hist_${MPart}_1gev.root\")"
+#  root -q $cmd
+
+#  cmd="Resolution.C(2400,\"output/DualTestBeam_5gev_${MPart}.root\",5,\"histos/hist_${MPart}_5gev.root\")"
+#  root -q $cmd
+
+  cmd="Resolution.C(2400,\"output/DualTestBeam_10gev_${MPart}.root\",10,\"histos/hist_${MPart}_10gev.root\")"
+  root -q $cmd
+
+#  cmd="Resolution.C(2400,\"output/DualTestBeam_20gev_${MPart}.root\",20,\"histos/hist_${MPart}_20gev.root\")"
+#  root -q $cmd
+
+  #cmd="Resolution.C(1000,\"output/DualTestBeam_50gev_${MPart}.root\",50,\"histos/hist_${MPart}_50gev.root\")"
+  #root -q $cmd
+
+
+  let "n = $n + 1"
+done
+
+exit 0
+
+
+#root -q 'Resolution.C(300,"output/DualTestBeam_0.5gev_mu-_100evt.root",0.5,"histos/hito_mu-_0.5gev.root")'
+
+
+# root -b -l -q  Resolution.C \(1000,"output/DualTestBeam_1gev_e-_1000evt.root",1, "histos/hito_e-_1gev.root" \);
+
