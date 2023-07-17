@@ -1,5 +1,8 @@
 # Prerequisites
 *.d
+*~
+*.pyc
+*.root
 
 # Object files
 *.o
