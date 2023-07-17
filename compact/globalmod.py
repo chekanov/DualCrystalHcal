@@ -1,3 +1,5 @@
+# Global module
+
 from math import sqrt,acos,exp
 from array import array
 from ROOT import gROOT,gPad,gStyle,TCanvas,TSpline3,TFile,TLine,TLatex,TAxis,TLegend,TPostScript
