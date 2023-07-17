@@ -13,7 +13,7 @@ The final part of this design is the steel plate of 0.1 cm width that protects t
 quartz layer and forms the wall of the single layer. 
 This results in a 2 cm absorber and 1 cm active media for each of the 40 layers.
 The interaction length of the 40 x (1.8+0.1+0.1 cm)  steel absorbers  is 
-4.77~lambda_I. When adding the active media, the total  interaction length of the module is 5.77 lambda_I.
+4.77 lambda_I. When adding the active media, the total  interaction length of the module is 5.77 lambda_I.
 The transverse size of the module is 20 x 20 cm.
 
 Check the ECAL geometry using this top-level file SimpleECAL.xml that includes "ECalBarrel_DualCrystal.xml":
@@ -22,8 +22,17 @@ Check the ECAL geometry using this top-level file SimpleECAL.xml that includes "
 geoDisplay DRSingleCrystal.xml 
 ```
 
-Run this example using the script "A_RUN". It  makes the ROOT file (usieng Sarah's example). This program works when using material "PbWO4". This does not give scintillation photons, but you will see Cherenkov photons.
+Run this example using the script "A_RUN". It  makes the ROOT file (using Sarah's example). 
+To create ROOT files in "output" directory, run "A_RUN_ALL" script (takes very long!)
 
+The main script that runs over data stired in "output" is: 
+
+```bash
+A_RUN_RESOLUTION
+```
+
+It runs "Resolution.C" which is the main analysis program that fills histograms and put them to "histo" directory.
+ 
 This program is based on the SingleDualCrystal by Sarah Eno (eno@umd.edu).
  
 
@@ -33,10 +42,10 @@ This program is based on the SingleDualCrystal by Sarah Eno (eno@umd.edu).
 source /cvmfs/sft.cern.ch/lcg/views/LCG_101/x86_64-centos7-gcc11-opt/setup.sh
 git clone https://github.com/AIDASoft/DD4hep.git
 cd DD4hep/examples
-git clone git@github.com:chekanov/DualCrystalTower.git 
-# edit CMakeLists.txt and add DualCrystalTower to
+git clone git@github.com:chekanov/DualCrystalHcal.git 
+# edit CMakeLists.txt and add DualCrystalHcal to
 # SET(DD4HEP _EXAMPLES "AlignDet CLICSiD ClientTests Conditions DDCMS DDCodex DDDigi DDG4 DDG4_MySensDet LHeD Optica\
-lSurfaces Persistency DDCAD SimpleDetector DualCrystalTower"
+lSurfaces Persistency DDCAD SimpleDetector DualCrystalHcal"
 CACHE STRING "List of DD4hep Examples to build")
 
 cd ..
