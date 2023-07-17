@@ -1,0 +1,34 @@
+#!/bin/bash
+
+
+source ./particles.sh
+
+n=1
+#------------------------------ start loop ----------------------------
+while  [ $n -le $Nparticles ]
+do
+  MPart=${particle[$n]}
+  echo "Merging for particle ${MPart}"
+
+rm -f output/DualTestBeam_0.5gev_${MPart}.root
+rm -f output/DualTestBeam_1gev_${MPart}.root
+rm -f output/DualTestBeam_5gev_${MPart}.root
+rm -f output/DualTestBeam_10gev_${MPart}.root
+rm -f output/DualTestBeam_20gev_${MPart}.root
+rm -f output/DualTestBeam_50gev_${MPart}.root
+
+hadd -f output/DualTestBeam_0.5gev_${MPart}.root output/DualTestBeam_0.5gev_${MPart}_*evt_*.root
+hadd -f output/DualTestBeam_1gev_${MPart}.root output/DualTestBeam_1gev_${MPart}_*evt_*.root
+hadd -f output/DualTestBeam_5gev_${MPart}.root output/DualTestBeam_5gev_${MPart}_*evt_*.root
+hadd -f output/DualTestBeam_10gev_${MPart}.root output/DualTestBeam_10gev_${MPart}_*evt_*.root
+hadd -f output/DualTestBeam_20gev_${MPart}.root output/DualTestBeam_20gev_${MPart}_*evt_*.root
+#hadd -f output/DualTestBeam_50gev_${MPart}.root output/DualTestBeam_50gev_${MPart}_*evt_*.root
+
+  let "n = $n + 1"
+done
+
+rm -f output/DualTestBeam*evt_*.root
+
+exit 0
+
+ 

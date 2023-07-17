@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#root.exe
+#at root prompt: .L CrystalAna.C
+#crystalana(10,"out.root")
+#then look at the resulting histograms in hist.root 
+
+# ddsim --compactFile=./DRJunk.xml --runType=vis -G --steeringFile junkst.py --outputFile=testSCEPCAL.root --part.userParticleHandler='' -G --gun.position="0.,0.,-300." --gun.direction "0 0 1" --gun.energy "1*GeV" --gun.particle="mu-"
+
+# gzip output/*.log
+
+batch=5
+
+events=200
+
+energy="50"
+
+source ./particles.sh
+
+n=1
+#------------------------------ start loop ----------------------------
+while  [ $n -le $Nparticles ]
+do
+  MPart=${particle[$n]}
+  echo "Run for particle ${MPart}"
+
+  log="output/DualTestBeam_${energy}gev_${MPart}_${events}evt_$batch.log"
+  #nohup ./A_JOB $energy $MPart $events $batch > $log 2>&1 &
+  nohup ./A_JOB $energy $MPart $events $batch > /dev/null 2>&1 &
+  let "n = $n + 1"
+done
+ 
+exit 0
+

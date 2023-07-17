@@ -1,0 +1,15 @@
+
+# cherenkov + scintillation
+# ddsim --compactFile=./DRJunk.xml --runType=vis -G --steeringFile SCEPCALsteering.py --outputFile=testSCEPCAL.root --part.userParticleHandler='' -G --gun.position="0.,0.,-300." --gun.direction "0 0 1" --gun.energy "1*GeV" --gun.particle="mu-"
+
+ddsim --compactFile=./DRJunk.xml --runType=vis -G --steeringFile SCEPCALsteering.py --outputFile=testSCEPCAL.root --part.userParticleHandler='' -G --gun.position="0.,0.,-800." --gun.direction "0 0 1" --gun.energy "1*GeV" --gun.particle="mu-"
+
+
+# Only cherenkov
+# ddsim --compactFile=./DRJunk.xml --runType=vis -G --steeringFile junkst2.py --outputFile=testSCEPCAL.root --part.userParticleHandler='' -G --gun.position="0.,0.,-300." --gun.direction "0 0 1" --gun.energy "1*GeV" --gun.particle="mu-"
+
+# when cherenov is OFF
+# ddsim --compactFile=./DRJunk.xml --runType=vis -G --steeringFile junkst.py --outputFile=testSCEPCAL.root --part.userParticleHandler='' -G --gun.position="0.,0.,-300." --gun.direction "0 0 1" --gun.energy "1*GeV" --gun.particle="mu-"
+
+# ddsim --steeringFile SCEPCALsteering.py --compact ./DRSingleCrystal.xml --runType batch --part.userParticleHandler='' -G --gun.position="0.,30.,0." --gun.direction "0 -1 0" --gun.energy "1*GeV" --gun.particle="mu-" -N 1 -O out.root
+

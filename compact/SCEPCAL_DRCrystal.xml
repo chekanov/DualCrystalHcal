@@ -1,0 +1,88 @@
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete SiD tracker detector                -->
+<!--    of the SiD linear collider detector design.                         -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this module                  -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ the include statements for the sensitive detectors and         -->
+<!--         the corresponding support structure(s)                         -->
+<!--                                                                        -->
+<!--                                                                        -->
+<!--   @author  M.Frank                                                     -->
+<!--   @date    14/11/2014                                                  -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+
+
+<!-- please note these are half lengths and widths -->
+
+  <detectors>
+    <detector id="EcalBarrel_ID" name="DRCrystal" type="DD4hep_DRCrystal" readout="DRCNoSegment" vis="Invisible">
+
+
+ <comment>Tower of Electromagnetic + Hadronic Calorimeter Barrel</comment>
+
+
+ <dimensions width="DRcrystalwidth" z_length="(20+0.2 + 40*(2+0.6+0.6))*cm" repeat="1" gap="0"/>
+
+
+<!--  a tower may have several different patterns that repeat.
+for example, there may be 10 layers with one thickness of Pb and scint and 20 with another set of thicknesses.
+each of these repeating things is a "layer". (so in this example, two "layers") 
+within a layer is a slice os the Pb and scint are slices
+the assembled tower is a Stave 
+
+This tower has: ECAL (21 X0 or 1 lambda)
+
+HCAL  has 40 layers. This is  40*(20)  = 80 cm / 16.77  =  4.77 lambda 
+Plus it has 40 layers of quarz, which is 10 cm width or 1 lambda. In total, we have 5.77  lambda for HCAL 
+
+To add ECAL, it will be 5.2 + 1 = 6.77 lambda.
+-->
+
+
+ <staves vis="Invisible"/>
+
+<!--
+<layer  repeat="1"  vis="Invisible">
+      <slice material = "killMedia" thickness = "0.1*cm" sensitive="yes" limits="cal_limits" vis="CrystalEcalSensitiveVis"/>
+      <slice material = "E_PbWO4" thickness = "DRcrystallength" sensitive="yes" limits="cal_limits" vis="CrystalEcalLayerVis"/>
+      <slice material = "killMedia" thickness = "0.1*cm" sensitive="yes" limits="cal_limits" vis="CrystalEcalSensitiveVis"/>
+</layer>
+-->
+
+<layer  repeat="1"  vis="Invisible">
+      <slice material = "Vacuum" thickness = "0.1*cm" sensitive="no" limits="cal_limits" vis="CrystalVacuumVis"/>
+      <slice material = "Vacuum" thickness = "DRcrystallength" sensitive="no" limits="cal_limits" vis="CrystalVacuumVis"/>
+      <slice material = "Vacuum" thickness = "0.1*cm" sensitive="no" limits="cal_limits" vis="CrystalVacuumVis"/>
+</layer>
+
+
+<layer  repeat="40"  vis="Invisible">
+
+      <slice material = "Steel235" thickness = "1.8*cm" sensitive="no" limits="cal_limits" vis="CrystalHcalLayerVis"/>
+
+      <slice material = "killMedia2" thickness = "0.05*cm" sensitive="yes" limits="cal_limits" vis="CrystalEcalSensitiveVis"/>
+      <slice material = "DR_Polystyrene" thickness = "0.5*cm" sensitive="yes" limits="cal_limits" vis="ScintVis"/>
+      <slice material = "killMedia2" thickness = "0.05*cm" sensitive="yes" limits="cal_limits" vis="CrystalEcalSensitiveVis"/>
+
+      <slice material = "Steel235" thickness = "0.1*cm" sensitive="no" limits="cal_limits" vis="CrystalHcalLayerVis"/>
+
+      <slice material = "killMedia3" thickness = "0.05*cm" sensitive="yes" limits="cal_limits" vis="CrystalEcalSensitiveVis"/>
+      <slice material = "DR_Quartz" thickness = "0.5*cm" sensitive="yes" limits="cal_limits" vis="CerenVis"/>
+      <slice material = "killMedia3" thickness = "0.05*cm" sensitive="yes" limits="cal_limits" vis="CrystalEcalSensitiveVis"/>
+
+      <slice material = "Steel235" thickness = "0.1*cm" sensitive="no" limits="cal_limits" vis="CrystalHcalLayerVis"/>
+      
+</layer>
+
+
+    </detector>
+  </detectors>
+
+
+

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# run job
+energy=$1
+particle=$2
+events=$3
+batch=$4
+
+
+outfile="output/DualTestBeam_${energy}gev_${particle}_${events}evt_${batch}.root" 
+# outfile=out_${energy}_${particle}_${events}.slcio
+
+ddsim --steeringFile SCEPCALsteering.py --compact ./DRSingleCrystal.xml --runType batch --part.userParticleHandler='' -G --gun.position="0.,0.,-800." --gun.direction "0 0 1" --gun.energy ${energy}*GeV --gun.particle=${particle} -N $events -O $outfile
+
+
+# ddsim --steeringFile SCEPCALsteering.py --compact ./DRDualTestBeam.xml --runType batch --part.userParticleHandler='' -G --gun.position="0.,0.,-300." --gun.direction "0 0 1" --gun.energy ${energy}*GeV --gun.particle=${particle} -N $events -O $outfile
