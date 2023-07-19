@@ -10,7 +10,7 @@
 #include "DD4hep/Factories.h"
 #include "DDG4/Geant4Particle.h"
 #include "DDG4/Geant4Data.h"
-#include "../src/DualCrystalCalorimeterHcalHit.h"
+#include "../src/DualCrystalHcalHit.h"
 
 #include <vector>
 #include <algorithm>
@@ -26,7 +26,7 @@ void crystalana(int num_evtsmax, const char* inputfilename) {
 
 
   typedef std::vector<dd4hep::sim::Geant4Particle*> GenParts;
-  typedef std::vector<CalVision::DualCrystalCalorimeterHcalHit*> CalHits;
+  typedef std::vector<CalVision::DualCrystalHcalHit*> CalHits;
 
   // read in libraries that define the classes
   Long_t result;
@@ -138,7 +138,7 @@ void crystalana(int num_evtsmax, const char* inputfilename) {
       int nscinttot=0;
       int SCEPRINT=10;
       for(size_t i=0;i<ecalhits->size(); ++i) {
-	CalVision::DualCrystalCalorimeterHcalHit* aecalhit =ecalhits->at(i);
+	CalVision::DualCrystalHcalHit* aecalhit =ecalhits->at(i);
 	//	std::cout<<"       "<<i<<" energy "<<aecalhit->energyDeposit<<std::endl;
 	esum+=aecalhit->energyDeposit;
 	ncertot+=aecalhit->ncerenkov;
