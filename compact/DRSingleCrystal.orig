@@ -205,7 +205,7 @@
       4.13281*eV 0.
     "/>
 
-    </properties>
+  </properties>
 
 
 
@@ -292,15 +292,15 @@
 
 
 
-
+<!-- danger danger will robinson using values for polystyrene -->
   <material name="E_PbWO4">
     <D value="8.28" unit="g/cm3" />
     <fraction n="0.45532661" ref="Pb"/>
     <fraction n="0.40403397" ref="W"/>
     <fraction n="0.14063942" ref="O"/>
     <property name="RINDEX"        ref="RINDEX__PbWO4"/>
-      <property name="ABSLENGTH" ref="AbsLen_PbWO4"/>
-      <property name="SCINTILLATIONCOMPONENT1" ref="scintFast_PbWO4"/>
+      <property name="ABSLENGTH" ref="AbsLen_PS"/>
+      <property name="SCINTILLATIONCOMPONENT1" ref="scintFast_PS"/>
       <constant name="SCINTILLATIONYIELD" value="0.45/keV"/>
       <constant name="SCINTILLATIONTIMECONSTANT1" value="5.*ns"/>
       <constant name="SCINTILLATIONTIMECONSTANT2" value="15.*ns"/>
@@ -309,13 +309,20 @@
       <constant name="SCINTILLATIONYIELD1" value="0.3"/>
   </material>
 
+<!--  
+https://indico.bnl.gov/event/11918/contributions/50512/attachments/35032/56968/210608_shKo_EIC.pdf
+SCINTILLATIONYIELD=13.9/keV
+We reduce it by factor 100 to speed up!
+SCINTILLATIONYIELD=0.139/keV
+-->
+
   <material name="DR_Polystyrene">
       <D value="1.032" unit="g/cm3"/>
       <composite n="19" ref="C"/>
       <composite n="21" ref="H"/>
       <property name="RINDEX" ref="RI_PS"/>
       <property name="ABSLENGTH" ref="AbsLen_PS"/>
-      <property name="SCINTILLATIONCOMPONENT1" ref="scintFast_PS"/>
+     <property name="SCINTILLATIONCOMPONENT1" ref="scintFast_PS"/>
 <!-- set low because impossibly long at correct yield -->
 <!--      <constant name="SCINTILLATIONYIELD" value="50/MeV"/> -->
       <constant name="SCINTILLATIONYIELD" value="50/MeV"/>
@@ -347,7 +354,7 @@
     <limitset name="cal_limits">
       <limit name="step_length_max" particles="*" value="100.0" unit="mm" />
     </limitset>
-  </limits>
+</limits>
 
 
 
