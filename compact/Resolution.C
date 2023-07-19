@@ -16,7 +16,7 @@
 #include "DD4hep/Factories.h"
 #include "DDG4/Geant4Particle.h"
 #include "DDG4/Geant4Data.h"
-#include "../src/DualCrystalCalorimeterHit.h"
+#include "../src/DualCrystalCalorimeterHcalHit.h"
 
 #include <vector>
 #include <algorithm>
@@ -44,7 +44,7 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
 
 
   typedef std::vector<dd4hep::sim::Geant4Particle*> GenParts;
-  typedef std::vector<CalVision::DualCrystalCalorimeterHit*> CalHits;
+  typedef std::vector<CalVision::DualCrystalCalorimeterHcalHit*> CalHits;
 
   // read in libraries that define the classes
   Long_t result;
@@ -318,7 +318,7 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
       int nscinttot=0;
       int SCEPRINT=10;
       for(size_t i=0;i<ecalhits->size(); ++i) {
-	CalVision::DualCrystalCalorimeterHit* aecalhit =ecalhits->at(i);
+	CalVision::DualCrystalCalorimeterHcalHit* aecalhit =ecalhits->at(i);
 	//	std::cout<<"       "<<i<<" energy "<<aecalhit->energyDeposit<<std::endl;
 	esum+=aecalhit->energyDeposit;
 	ncertot+=aecalhit->ncerenkov;
@@ -516,7 +516,7 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
        // associate calibrated light with raw hits
        // MeV vs Calibrated photons
        for(size_t i=0;i<ecalhits->size(); ++i) {
-        CalVision::DualCrystalCalorimeterHit* aecalhit =ecalhits->at(i);
+        CalVision::DualCrystalCalorimeterHcalHit* aecalhit =ecalhits->at(i);
         float hit = aecalhit->energyDeposit;
         // remove 0.1 kEV hits
         if (hit<0.0001) continue; 

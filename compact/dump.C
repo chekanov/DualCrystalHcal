@@ -17,7 +17,7 @@
 using namespace CalVision;
 
 void dumpDump() {
-  gSystem->Load("libSingleDualCrystal.so");
+  gSystem->Load("libDualCrystalHcal.so");
   gSystem->Load("libDDG4Plugins.so");
   int i = Dump::DualCrystalCalorimeterdumpData(10,"testSCEPCAL.root");
 

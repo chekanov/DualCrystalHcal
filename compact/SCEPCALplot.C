@@ -11,7 +11,7 @@
 #include "DD4hep/Factories.h"
 #include "DDG4/Geant4Particle.h"
 #include "DDG4/Geant4Data.h"
-#include "../src/DualCrystalCalorimeterHit.h"
+#include "../src/DualCrystalCalorimeterHcalHit.h"
 
 #include <vector>
 #include <algorithm>
@@ -23,7 +23,7 @@ void SCEPCALplot(int num_evtsmax, const char* inputfilename) {
 
 
   typedef std::vector<dd4hep::sim::Geant4Particle*> GenParts;
-  typedef std::vector<CalVision::DualCrystalCalorimeterHit*> CalHits;
+  typedef std::vector<CalVision::DualCrystalCalorimeterHcalHit*> CalHits;
 
   // read in libraries that define the classes
   Long_t result;
@@ -36,7 +36,7 @@ void SCEPCALplot(int num_evtsmax, const char* inputfilename) {
   result = gSystem->Load("libDDG4IO");
   result = gSystem->Load("libDDEvePlugins");
   result = gSystem->Load("libDDEvePlugins");
-  result = gSystem->Load("libSingleDualCrystal");
+  result = gSystem->Load("libDualCrystalHcal");
   result = gSystem->Load("libDDG4Plugins");
 
 

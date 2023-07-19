@@ -12,7 +12,7 @@
 //==========================================================================
 
 // Framework include files
-#include "DualCrystalCalorimeterHit.h"
+#include "DualCrystalHcalHit.h"
 #include "DDG4/Geant4SensDetAction.inl"
 #include "DDG4/Factories.h"
 #include "DDG4/Geant4Random.h"
@@ -39,7 +39,7 @@ namespace CalVision {
 
   class DualCrystalHcalSD {
   public:
-    typedef DualCrystalCalorimeterHit Hit;
+    typedef DualCrystalHcalHit Hit;
     // If we need special data to personalize the action, be put it here
     //int mumDeposits = 0;
     //double integratedDeposit = 0;
@@ -101,7 +101,7 @@ namespace dd4hep {
 
 
       Geant4StepHandler h(step);
-      HitContribution contrib = DualCrystalCalorimeterHit::extractContribution(step);
+      HitContribution contrib = DualCrystalHcalHit::extractContribution(step);
 
       Geant4HitCollection*  coll    = collection(m_collectionID);
       VolumeID cell = 0;
@@ -135,12 +135,12 @@ namespace dd4hep {
       //dd4hep::sim::Geant4Random& rnd = evt.random();
 
 
-      DualCrystalCalorimeterHit* hit = coll->findByKey<DualCrystalCalorimeterHit>(cell);
+      DualCrystalHcalHit* hit = coll->findByKey<DualCrystalHcalHit>(cell);
       if ( !hit ) {
         Geant4TouchableHandler handler(step);
 	DDSegmentation::Vector3D pos = m_segmentation.position(cell);
         Position global = h.localToGlobal(pos);
-        hit = new DualCrystalCalorimeterHit(global);
+        hit = new DualCrystalHcalHit(global);
         hit->cellID = cell;
         coll->add(cell, hit);
 
