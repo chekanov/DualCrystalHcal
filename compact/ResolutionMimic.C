@@ -137,6 +137,8 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
   // max value for multiplicity
   float maxCherenkov=5000000.;
   float maxScintil=5000000.;
+  if (beamE ==10)  maxScintil=maxScintil*10;
+  if (beamE ==20)  maxScintil=maxScintil*100;
 
   TH2F *depos_scintil = new TH2F("depos_scintil","NScintilation vs Depos", 1000,0.,100., 1000, 0.0, maxScintil);
   TH2F *depos_cherenk = new TH2F("depos_cherenk","Cherenkov vs Depos",     1000,0.,100., 1000, 0.0,  maxCherenkov);
@@ -554,11 +556,11 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
 
       // reconstructed from Scintillation
       // this calibration found using e- guns 0.5 GeV
-      float calibration_scint= (0.5*1000)/4551;
-      if (beamE ==1)  calibration_scint= (1.0*1000)/9204;
-      if (beamE ==5)  calibration_scint= (5.0*1000)/46380;
-      if (beamE ==10)  calibration_scint= (10.0*1000)/92800;
-      if (beamE ==20)  calibration_scint= (20.0*1000)/185600;
+      float calibration_scint= (0.5*1000)/328400;
+      if (beamE ==1)  calibration_scint= (1.0*1000)/662700;
+      if (beamE ==5)  calibration_scint= (5.0*1000)/3337000;
+      if (beamE ==10)  calibration_scint= (10.0*1000)/6677000;
+      if (beamE ==20)  calibration_scint= (20.0*1000)/13370000;
 
       float energy_scint = calibration_scint * nscinttot;
       heest_scint->Fill(energy_scint / mainee);
@@ -568,11 +570,12 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
       // corrected energy for Scinitallation + Cherenkov 
       // https://arxiv.org/pdf/0707.4021.pdf
       // this calibration found using e- guns 0.5 GeV 
-      float calibration_cherenkov = (0.5*1000)/23490; 
-      if (beamE ==1)   calibration_cherenkov= (1.0*1000)/47530;
-      if (beamE ==5)   calibration_cherenkov= (5.0*1000)/240800;
-      if (beamE ==10)  calibration_cherenkov= (10.0*1000)/481400;
-      if (beamE ==20)  calibration_cherenkov= (20.0*1000)/962700;
+      float calibration_cherenkov = (0.5*1000)/24460;
+      if (beamE ==1)   calibration_cherenkov= (1.0*1000)/49420;
+      if (beamE ==5)   calibration_cherenkov= (5.0*1000)/250300;
+      if (beamE ==10)  calibration_cherenkov= (10.0*1000)/500000;
+      if (beamE ==20)  calibration_cherenkov= (20.0*1000)/1002000;
+
 
       float energy_cherenkov = calibration_cherenkov * ncertot;
       heest_cherenk->Fill(energy_cherenkov / mainee);

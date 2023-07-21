@@ -94,6 +94,8 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
   // max value for multiplicity
   float maxCherenkov=5000000.;
   float maxScintil=5000000.;
+  if (beamE ==10)  maxScintil=maxScintil*10; 
+  if (beamE ==20)  maxScintil=maxScintil*100; 
 
   TH2F *depos_scintil = new TH2F("depos_scintil","NScintilation vs Depos", 1000,0.,100., 1000, 0.0, maxScintil);
   TH2F *depos_cherenk = new TH2F("depos_cherenk","Cherenkov vs Depos",     1000,0.,100., 1000, 0.0,  maxCherenkov);
@@ -109,6 +111,8 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
 
   TH1F *scintil= new TH1F("scintil","N of scintillation",50000,0., maxScintil);
   TH1F *cherenk= new TH1F("cherenk","N of cherenkov",50000,0., maxCherenkov);
+
+
   TH1F *scintil_cherenk= new TH1F("scintil_cherenk","Combined  scintillation and cherenkov",50000,0., maxCherenkov+maxScintil);
   TH1F *cherenkDIVscintil= new TH1F("cherenkDIVscintil","Nr of cherenkov / scintillation",100, 0., 2.0);
 
@@ -291,7 +295,7 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
    // beta_em = beta_em / em_n;
    // beta_had = beta_had / had_n;
 
-    cout << "EM="<< em_n << " HAD=" << had_n << " E(EM)=" << em_E << " E(HAD)=" << had_E << " beta(EM)=" << beta_em << " beta(HAD)=" <<  beta_had << endl;
+    //cout << "EM="<< em_n << " HAD=" << had_n << " E(EM)=" << em_E << " E(HAD)=" << had_E << " beta(EM)=" << beta_em << " beta(HAD)=" <<  beta_had << endl;
 
     // ECAL hits  
     // there are hits in the crystal and also the photodetectors "kill media"
@@ -326,6 +330,7 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
 	if(i<SCEPRINT&&ievt<SCEPRINT2) std::cout<<" hit channel is "<<aecalhit->cellID<<" in hex is "<< std::hex<< aecalhit->cellID<<std::dec<<" "<<aecalhit->energyDeposit<<" "<<aecalhit->ncerenkov<<" "<<aecalhit->nscintillator<<std::endl;
 
 
+        //cout << "scinttot=" << aecalhit->nscintillator  << " cerenkov=" << aecalhit->ncerenkov << endl; 
 	// see ../src/DRCrystal_geo.cpp to see the assignments
 
         /*
@@ -429,6 +434,7 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
       float EMfrac=em_E/(em_E+had_E);
       EMFrac->Fill( EMfrac);
 
+      //cout << "Nr of scintillation=" << nscinttot << " Nr of Cherenkov=" << ncertot << endl;
 
       profSS_EM -> Fill(em_n,  nscinttot );
       profCC_EM -> Fill(em_n,  ncertot );
@@ -488,11 +494,11 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
 
       // reconstructed from Scintillation
       // this calibration found using e- guns 0.5 GeV
-      float calibration_scint= (0.5*1000)/4551;
-      if (beamE ==1)  calibration_scint= (1.0*1000)/9204;
-      if (beamE ==5)  calibration_scint= (5.0*1000)/46380;
-      if (beamE ==10)  calibration_scint= (10.0*1000)/92800;
-      if (beamE ==20)  calibration_scint= (20.0*1000)/185600;
+      float calibration_scint= (0.5*1000)/328400;
+      if (beamE ==1)  calibration_scint= (1.0*1000)/662700;
+      if (beamE ==5)  calibration_scint= (5.0*1000)/3337000;
+      if (beamE ==10)  calibration_scint= (10.0*1000)/6677000;
+      if (beamE ==20)  calibration_scint= (20.0*1000)/13370000;
 
       float energy_scint = calibration_scint * nscinttot;
       heest_scint->Fill(energy_scint / mainee);
@@ -502,11 +508,11 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
       // corrected energy for Scinitallation + Cherenkov 
       // https://arxiv.org/pdf/0707.4021.pdf
       // this calibration found using e- guns 0.5 GeV 
-      float calibration_cherenkov = (0.5*1000)/23490; 
-      if (beamE ==1)   calibration_cherenkov= (1.0*1000)/47530;
-      if (beamE ==5)   calibration_cherenkov= (5.0*1000)/240800;
-      if (beamE ==10)  calibration_cherenkov= (10.0*1000)/481400;
-      if (beamE ==20)  calibration_cherenkov= (20.0*1000)/962700;
+      float calibration_cherenkov = (0.5*1000)/24460; 
+      if (beamE ==1)   calibration_cherenkov= (1.0*1000)/49420;
+      if (beamE ==5)   calibration_cherenkov= (5.0*1000)/250300;
+      if (beamE ==10)  calibration_cherenkov= (10.0*1000)/500000;
+      if (beamE ==20)  calibration_cherenkov= (20.0*1000)/1002000;
 
       float energy_cherenkov = calibration_cherenkov * ncertot;
       heest_cherenk->Fill(energy_cherenkov / mainee);
@@ -562,12 +568,15 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
       // scatter plot for calibrated signals
       schint_cherenk_calib->Fill(energy_scint, energy_cherenkov);
       schint_cherenk_calib_rel->Fill(energy_scint/mainee, energy_cherenkov/mainee);
- 
-      float h_over_e_S=0.7111; // h/e for scinittilation 
-      float h_over_e_C=0.5186; // h/e for cherenkov 
+
+       // from 10 GeV sample
+       // 4800000 / 6677000 = 0.71 
+       // 251000 / 501400 = 0.50 
+      float h_over_e_S=0.71; // h/e for scinittilation 
+      float h_over_e_C=0.50; // h/e for cherenkov 
       //float kappa=(1-h_over_e_S) / (1-h_over_e_C);
  
-      float kappa=0.600; 
+      float kappa=0.58; 
       float a1=( energy_scint - kappa * energy_cherenkov);
       float a2= 1 - kappa;
 
