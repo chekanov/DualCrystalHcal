@@ -17,7 +17,7 @@ nameY="Events"
 Xmin=0.
 Xmax=2.0 
 Ymin=0.
-Ymax=549 
+Ymax=549
 
 def getRes(hh):
       RMS=rms90(hh);
@@ -75,7 +75,7 @@ gPad.SetTicky()
 ay.Draw("same")
 ax.Draw("same")
 
-hfile=TFile("histos/hist_pi-_5gev.root")
+hfile=TFile("histos/hist_pi-_20gev.root")
 histo=hfile.Get("heest_meass")
 histo1=hfile.Get("heest_scint")
 histo2=hfile.Get("heest_cherenk")
@@ -84,7 +84,11 @@ histo.SetMarkerColor(1)
 histo.SetLineWidth(3)
 histo.SetMarkerSize(1.2)
 histo.SetMarkerStyle(21)
-histo.Draw("same pe")
+# histo.Draw("same pe")
+
+gr= TH1toTGraphError(histo, 1.0/histo.GetMean());
+gr.SetLineColor(1)
+gr.Draw("same")
 
 histo1.SetLineStyle(1)
 histo1.SetLineWidth(3)
@@ -92,15 +96,26 @@ histo1.SetMarkerColor(2)
 histo1.SetMarkerSize(1.2)
 histo1.SetMarkerStyle(22)
 histo1.SetLineColor(2)
-histo1.Draw("same pe")
+# histo1.Draw("same pe")
+
+gr1= TH1toTGraphError(histo1, 1.0/histo1.GetMean());
+gr1.SetLineColor(2)
+gr1.Draw("same")
 
 histo2.SetLineWidth(3)
 histo2.SetMarkerColor(3)
 histo2.SetMarkerSize(1.2)
 histo2.SetMarkerStyle(20)
 histo2.SetLineColor(3)
-histo2.Draw("same pe")
+# histo2.Draw("same pe")
 
+gr2= TH1toTGraphError(histo2, 1.0/histo2.GetMean());
+gr2.SetLineColor(3)
+gr2.Draw("same")
+
+print("Integral sum=",histo.Integral(histo.FindBin(0.1), histo.FindBin(2.0) ))
+print("Integral Sint=",histo1.Integral( histo.FindBin(0.1), histo.FindBin(2.0) ))
+print("Integral Cher=",histo2.Integral( histo.FindBin(0.1), histo.FindBin(2.0) ))
 
 def getFit(hh, color=1):
     mean=hh.GetMean()
@@ -117,13 +132,16 @@ def getFit(hh, color=1):
     return b1
 
 
-b1=getFit(histo1, color=2)
+#b1=getFit(histo1, color=2)
+b1=getFit(gr1, color=2)
 print("Scint: Width/Mean=",b1)
 
-b2=getFit(histo2, color=3)
+#b2=getFit(histo2, color=3)
+b2=getFit(gr2, color=3)
 print("Cheren: Width/Mean=",b2)
 
-b3=getFit(histo, color=1)
+#b3=getFit(histo, color=1)
+b3=getFit(gr, color=1)
 print("Scint + Cheren: Width/Mean=",b3)
 
 
@@ -132,7 +150,7 @@ leg2.SetBorderSize(0);
 leg2.SetTextFont(62);
 leg2.SetFillColor(10);
 leg2.SetTextSize(0.033);
-leg2.SetHeader("5 GeV pions")
+leg2.SetHeader("20 GeV pions")
 #leg2.AddEntry(histo,"Cherenk+Scint: RMS90/E="+getRes(histo),"l")
 #leg2.AddEntry(histo1,"Scint: RMS90/E=" + getRes(histo1),"l")
 #leg2.AddEntry(histo2,"Cherenk: RMS90/E="+getRes(histo2) ,"l")

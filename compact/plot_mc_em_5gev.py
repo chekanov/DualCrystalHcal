@@ -21,10 +21,11 @@ print ('Use as: script.py -b 0 (or 1,2)')
 nameX="E_{EM} [GeV]"
 nameY="<Y>"
 
-Xmin=0.0001 
-Xmax=20 
-Ymin=0. 
-Ymax=800*1000-10 
+min=0.0001
+Xmin=0.1
+Xmax=20.
+Ymin=10000
+Ymax=20000*1000-10
 
 import sys
 epsfig="figs/"+sys.argv[0].replace(".py",".eps")
@@ -120,6 +121,7 @@ for i in range( len(particles) ):
   gPad.SetBottomMargin(0.18);
   gPad.SetTopMargin(0.05);
   gPad.SetRightMargin(0.02);
+  gPad.SetLogy(1)
 
   h=gPad.DrawFrame(Xmin,Ymin,Xmax,Ymax);
   h.Draw()
@@ -207,7 +209,8 @@ for i in range( len(particles) ):
 
   #myText(0.8,0.9,2,0.12,pp)
  
-  myText(0.75,0.75,2,0.09,pp)
+  if (i==0): myText(0.75,0.76,2,0.09,pp)
+  if (i>0): myText(0.75,0.82,2,0.09,pp)
  
   #myTextUser(0.5,25000,2,0.12,pp)
   #myTextUser(0.58,0.12,1,0.07,"<S>="+str(mean0)+"> RMS_{S}="+str(rms0))

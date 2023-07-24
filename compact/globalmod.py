@@ -16,7 +16,8 @@ class Gauss:
        return out;
 
 # convert histogram to TGraph
-def TH1toTGraphError(h1):
+# also apply scale if needed
+def TH1toTGraphError(h1, shiftX=1.0):
 
     g1 = TGraphErrors()
     for i in range(h1.GetNbinsX()):
@@ -24,7 +25,7 @@ def TH1toTGraphError(h1):
         ey = h1.GetBinError(i+1)
         x = h1.GetBinCenter(i+1)
         ex = h1.GetBinWidth(i+1)/2.0
-        g1.SetPoint(i, x, y)
+        g1.SetPoint(i, x*shiftX, y)
         g1.SetPointError(i, ex, ey)
 
     g1.SetMarkerColor(1)

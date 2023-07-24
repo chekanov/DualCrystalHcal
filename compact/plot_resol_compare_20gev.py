@@ -17,7 +17,7 @@ nameY="Events"
 Xmin=0.
 Xmax=2.0 
 Ymin=0.
-Ymax=449
+Ymax=549
 
 def getRes(hh):
       RMS=rms90(hh);
@@ -136,9 +136,9 @@ leg2.SetHeader("20 GeV pions")
 #leg2.AddEntry(histo,"Cherenk+Scint: RMS90/E="+getRes(histo),"l")
 #leg2.AddEntry(histo1,"Scint: RMS90/E=" + getRes(histo1),"l")
 #leg2.AddEntry(histo2,"Cherenk: RMS90/E="+getRes(histo2) ,"l")
-leg2.AddEntry(histo1,"Scint: #sigma/E=" + b2,"lp")
-leg2.AddEntry(histo2,"Cherenk: #sigma/E="+b3 ,"lp")
-leg2.AddEntry(histo,"Cherenk+Scint: #sigma/E="+b1,"lp")
+leg2.AddEntry(histo1,"Scint: #sigma/E=" + b1,"lp")
+leg2.AddEntry(histo2,"Cherenk: #sigma/E="+b2 ,"lp")
+leg2.AddEntry(histo,"Cherenk+Scint: #sigma/E="+b3,"lp")
 
 leg2.Draw("same");
 

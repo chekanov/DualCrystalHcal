@@ -17,7 +17,7 @@ nameY="Events"
 Xmin=0.
 Xmax=2.0 
 Ymin=0.
-Ymax=349
+Ymax=549
 
 def getRes(hh):
       RMS=rms90(hh);
