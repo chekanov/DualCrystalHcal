@@ -41,6 +41,68 @@ const float MeV2GeV = 0.001;
 // calorimeter sampling fraction
 const float sampling_fraction=0.11;
 
+
+// describe geometry parts
+const  float active=5;
+const  float foil=0.5;
+const  float steel=18.0;
+const  float killmed=0.5;
+const  float steel_separator=1.0;
+
+
+// is light from Polysterene ?
+// We will include killmedia too
+bool isPolystyrene(float z) {
+
+      float floatSpace= steel_separator+2*killmed+active+steel_separator+steel;
+
+      // 539 mm is the lowest edge
+      float lowEdge=-539 + steel;
+      float highEdge=lowEdge+active+2*killmed;
+
+      bool take =false;
+      for (int i=0; i<40; i++) {
+         //cout << "polysterene=" << i << " [" <<  lowEdge << " - " <<  highEdge <<  "]" << endl;
+         if (z>lowEdge && z<highEdge) {
+         take =true;
+         break;
+         };
+         lowEdge=highEdge+floatSpace;
+         highEdge=lowEdge+active+2*killmed;
+      };
+
+      return take;
+      };
+
+
+// is light from quartz?
+bool isQuartz(float z) {
+
+      float floatSpace=steel+2*killmed+active+steel_separator;
+      // 539 mm is the lowest edge 
+      float lowEdge=-539. + floatSpace;
+      float highEdge=lowEdge+active + 2*killmed;
+
+      bool take =false;
+      for (int i=0; i<40; i++) {
+
+        //cout << "quartz=" << i << " [" <<  lowEdge << " - " <<  highEdge <<  "]" << endl;
+
+        if (z>lowEdge && z<highEdge) {
+          take =true;
+          break;
+         };
+         lowEdge=highEdge+steel_separator+floatSpace;
+         highEdge=lowEdge+active+2*killmed;
+
+
+      };
+
+      return take;
+      };
+
+
+
 void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, const char* outputfilename ) {
 
 
@@ -65,35 +127,42 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
   // use 10 GeV pions 
   float ptmin=0.0; 
   float ptmax=50.0;
+
+  // ----------- scintillation ---------------------------------
   TF1* f_scint= new TF1("f_scint","[0]+x*[1]+[2]*x*x",ptmin,ptmax);
 
+  // from fits
   float a1=50174.562;
   float a2=1211.215;
   float a3=-4.176;
-  if (beamE ==1) { a1=6669.876; a2=-1393.655; a3=672.962; }
-  if (beamE ==5) { a1= 24868.266; a2= 1262.575; a3=-4.136; } 
-  if (beamE ==10)  { a1=50174.562; a2=1211.215; a3=-4.176; } 
-  if (beamE ==20)  { a1=8627.738; a2=5271.548; a3=-45.110; } 
+  // check pions from figs/gev10_scintl_mc_em_fit.txt
+  //if (beamE ==1) { a1=6271.566; a2=-288.732; a3=309.834; }
+  //if (beamE ==5) { a1= 24868.266; a2= 1262.575; a3=-4.136; }
+  if (beamE ==10)  { a1=4072745.365; a2=45392.803; a3=658.855; }
+  //if (beamE ==20)  { a1=22320.016; a2=2089.364; a3=-0.433; }
+
 
   // only 10 GeV for neutrons
   if (strcmp(outputfilename, "histos_mimic/hist_neutron_10gev.root") == 0) {
-    if (beamE ==10)  { a1=26239.941; a2=3177.677; a3=-50.972; }
+    if (beamE ==10)  { a1=3350927.014; a2=70226.100; a3=262.182; }
   } 
-
 
   f_scint->SetParameter(0, a1); 
   f_scint->SetParameter(1, a2); 
   f_scint->SetParameter(2, a3); 
 
+
+  // --------------------- cherenkov ------------------------------
+  // check figs/"gev10_cheren_mc_em_fit.txt
   TF1* f_cheren= new TF1("f_cheren","[0]+x*[1]+[2]*x*x",ptmin,ptmax);
-  if (beamE ==1) { a1=50174.562; a2=1211.215; a3=-4.176; }
-  if (beamE ==5) { a1= 33227.497; a2=13222.813; a3=-150.427; }
-  if (beamE ==10)  { a1=71083.780; a2=12466.743; a3=-56.730; }
-  if (beamE ==20)  { a1=61621.966; a2=16003.502; a3=-75.346; }
+  //if (beamE ==1) { a1=13729.387; a2=6670.683; a3=553.572; }
+  //if (beamE ==5) { a1= 33227.497; a2=13222.813; a3=-150.427; }
+  if (beamE ==10)  { a1=50483.737; a2=6520.197; a3=-18.861; }
+  //if (beamE ==20)  { a1=95934.920; a2=15186.024; a3=-63.317; }
 
   // only 10 GeV for neutrons
   if (strcmp(outputfilename, "histos_mimic/hist_neutron_10gev.root") == 0) {
-    if (beamE ==10)  { a1=30704.768; a2=14588.43; a3=-145.048; }
+    if (beamE ==10)  { a1=29428.633; a2=6934.386; a3=-26.837; }
   }
 
 
@@ -152,8 +221,18 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
   TH1F *cherenkVsdepos = new TH1F("cherenkPerMeV","L: N of cherenkov per MeV",1000,0., 1000);
   TH1F *scintil_cherenkVsdepos = new TH1F("scintil_cherenkPerMeV","N of cherenkov per MeV",1000,0., 1000);
 
-  TH1F *scintil= new TH1F("scintil","N of scintillation",50000,0., maxScintil);
-  TH1F *cherenk= new TH1F("cherenk","N of cherenkov",50000,0., maxCherenkov);
+  TH1F *scintil= new TH1F("scintil","N of scintillation in Polisterene",50000,0., maxScintil);
+  TH1F *cherenk= new TH1F("cherenk","N of cherenkov in Quartz",50000,0., maxCherenkov);
+  // all cherenkov and scintialltion 
+  TH1F *scintil_all= new TH1F("scintil_all","N of scintillation in Polisterene+Quartz",50000,0., maxScintil);
+  TH1F *cherenk_all= new TH1F("cherenk_all","N of cherenkov in Polisterene+Quartz",50000,0., maxCherenkov);
+  // all cherenkov and scintialltion 
+
+
+
+  TH1F *zpos_scintil= new TH1F("zpos_scintil","scintillation vs zpos",3000,-1500., 1500.);
+  TH1F *zpos_cherenk= new TH1F("zpos_cherenk","cherenkov vs zpos",3000,-1500.,1500);
+
   TH1F *scintil_cherenk= new TH1F("scintil_cherenk","Combined  scintillation and cherenkov",50000,0., maxCherenkov+maxScintil);
   TH1F *cherenkDIVscintil= new TH1F("cherenkDIVscintil","Nr of cherenkov / scintillation",100, 0., 2.0);
 
@@ -185,7 +264,7 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
 
 
  TProfile2D* profSS_CC  = new TProfile2D("scint_cher_vs_energy_before","Profile of Scint versus E [GeV] no calib",250,0, 5.0, 250,0, 5.0, 0.0, 800000.0);
- TH2F *profSS_CC_2D= new TH2F("scint_cher_vs_energy_before","Profile of Scint versus E [GeV] no calib", 250, 0.0, 800000.0, 250, 0.0, 800000.0);
+ TH2F *profSS_CC_2D= new TH2F("scint_cher_vs_energy_before_2D","Profile of Scint versus E [GeV] no calib", 250, 0.0, 800000.0, 250, 0.0, 800000.0);
 
  // with RMS
  TProfile* profSS_SD  = new TProfile("scint_vs_energy_before_SD","Profile of Scint versus E [GeV] no calib +SD",250,0, 5.0, 0.0, 800000.0, "s");
@@ -206,7 +285,7 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
  if (beamE ==20)  fmax=120;
 
  // vs EM energy
- TProfile* profSS_EM_E  = new TProfile("scint_vs_EM_E_before_SD","Profile of Scint versus EM energy",40,0, fmax, 0.0, 2000000.0, "s");
+ TProfile* profSS_EM_E  = new TProfile("scint_vs_EM_E_before_SD","Profile of Scint versus EM energy",40,0, fmax, 0.0, 50000000.0, "s");
  TProfile* profCC_EM_E  = new TProfile("cher_vs_EM_E_before_SD","Profile of Cheren versus EM energy",40,0, fmax, 0.0, 2000000.0, "s");
 
 
@@ -221,11 +300,11 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
 
 
  // vs HD energy
- TProfile* profSS_HAD_E  = new TProfile("scint_vs_HAD_E_before_SD","Profile of Scint versus HAD energy",100,0, 5000, 0.0, 2000000.0, "s");
+ TProfile* profSS_HAD_E  = new TProfile("scint_vs_HAD_E_before_SD","Profile of Scint versus HAD energy",100,0, 5000, 0.0, 50000000.0, "s");
  TProfile* profCC_HAD_E  = new TProfile("cher_vs_HAD_E_before_SD","Profile of Cheren versus HAD energy",100,0, 5000, 0.0, 2000000.0, "s");
 
  // vs beta EM 
- TProfile* profSS_BetaEM  = new TProfile("scint_vs_BetaEM_before_SD","Profile of Scint versus EM beta",100,0, 500000, 0.0, 2000000.0, "s");
+ TProfile* profSS_BetaEM  = new TProfile("scint_vs_BetaEM_before_SD","Profile of Scint versus EM beta",100,0, 500000, 0.0, 50000000.0, "s");
  TProfile* profCC_BetaEM  = new TProfile("cher_vs_BetaEM_before_SD","Profile of Cheren versus EM beta",100,0, 500000, 0.0, 2000000.0, "s");
 
 
@@ -329,10 +408,9 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
     had_E=had_E*MeV2GeV;
 
   // average beta looks the same 
-   // beta_em = beta_em / em_n;
-   // beta_had = beta_had / had_n;
-
-   cout << "EM="<< em_n << " HAD=" << had_n << " E(EM)=" << em_E << " E(HAD)=" << had_E << " beta(EM)=" << beta_em << " beta(HAD)=" <<  beta_had << endl;
+  // beta_em = beta_em / em_n;
+  // beta_had = beta_had / had_n;
+  // cout << "EM="<< em_n << " HAD=" << had_n << " E(EM)=" << em_E << " E(HAD)=" << had_E << " beta(EM)=" << beta_em << " beta(HAD)=" <<  beta_had << endl;
 
 
 
@@ -359,6 +437,11 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
       int nscintchan[nchan]={0,0,0,0};
       int ncertot=0;
       int nscinttot=0;
+
+      int ncertot_all=0;
+      int nscinttot_all=0;
+
+
       int SCEPRINT=10;
       for(size_t i=0;i<ecalhits->size(); ++i) {
 	CalVision::DualCrystalHcalHit* aecalhit =ecalhits->at(i);
@@ -366,9 +449,10 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
 	esum+=aecalhit->energyDeposit;
         float hit_gev=(aecalhit->energyDeposit)*MeV2GeV / sampling_fraction ;
 
-        ncertot+=aecalhit->ncerenkov;
-        nscinttot+=aecalhit->nscintillator;
+        dd4hep::Position  pos = aecalhit->position;
 
+       // float nscin = (float)(aecalhit->nscintillator);
+       // float ncher = (float)(aecalhit->ncerenkov);
 
         /*
         // use gaussian with RMS 0.1
@@ -402,7 +486,6 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
         //std::cout<<" ihitchan =" << ihitchan << std::endl; 
         //std::cout<<" idet,ilayer,islice is ("<<idet<<","<<ilayer<<","<<islice<<")"<<std::endl;
 
-        dd4hep::Position  pos = aecalhit->position;
         //std::cout<<"DRcalo deposit "<< " position ("<<pos.X()<<","<<pos.Y()<<","<<pos.Z()<<") "<<std::endl;
 
           float nscin = (float)(aecalhit->ncerenkov);
@@ -421,14 +504,16 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
 
           //cout << "nhits=" << hit_gev << " scin=" << nscin << " cher=" << ncher << endl; 
 
-        // the total size of this detector is 114.2 mm 
-        // It is calculated as 40*(2+0.1+0.5+0.1+0.5) + 20+0.2. See: SCEPCAL_DRCrystal.xml 
-        // the center is in: 148.6/2 = 743 mm
-        // The most left ellement is in -743  
-        // The the position of ECAL is -743  to (-743 + 202) = -541, i.e. (-743 -  -541) 
+          //cout << "nhits=" << hit_gev << " scin=" << nscin << " cher=" << ncher << endl; 
+
+        // the total size of this detector is 1482  mm 
+        // It is calculated as 40*(18+0.5+5+0.5+1+0.5+5+0.5+1) + 200+2 See: SCEPCAL_DRCrystal.xml 
+        // the center is in:  1482/2 = 741 mm
+        // The most left ellement is in -741, most right is 651   
+        // The the position of ECAL is -741  to  (-741+202) = 539. 
 
         // ECAL:
-        if (pos.Z()>=-743 && pos.Z()<= -541)  {
+        if (pos.Z()>=-741 && pos.Z()<= -539)  {
                 esum_ECAL+=aecalhit->energyDeposit;
                 ncertot_ECAL+=ncher; 
                 nscinttot_ECAL+=nscin; 
@@ -645,11 +730,14 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
       schint_cherenk_calib->Fill(energy_scint, energy_cherenkov);
       schint_cherenk_calib_rel->Fill(energy_scint/mainee, energy_cherenkov/mainee);
  
-      float h_over_e_S=0.7111; // h/e for scinittilation 
-      float h_over_e_C=0.5186; // h/e for cherenkov 
+       // from 10 GeV sample
+       // 4800000 / 6677000 = 0.71 
+       // 251000 / 501400 = 0.50 
+      float h_over_e_S=0.71; // h/e for scinittilation 
+      float h_over_e_C=0.50; // h/e for cherenkov 
       //float kappa=(1-h_over_e_S) / (1-h_over_e_C);
- 
-      float kappa=0.600; 
+
+      float kappa=0.58;
       float a1=( energy_scint - kappa * energy_cherenkov);
       float a2= 1 - kappa;
 
@@ -659,6 +747,8 @@ void ResolutionMimic(int num_evtsmax, const char* inputfilename, float beamE, co
       heest_meass->Fill(energy_rec/mainee);
       //heest_meass->Fill(energy_rec*MeV2GeV);
 
+
+       cout << "heest_scint=" << energy_scint / mainee << " heest_cherenk=" << energy_cherenkov / mainee << "  heest_meass=" << energy_rec/mainee << endl; 
        /* debug 
        std::cout<<" True energy =  "<< mainee  << std::endl;
        std::cout<<" Hit energy deposit =  "<<esum << std::endl;
