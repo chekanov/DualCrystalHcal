@@ -136,9 +136,9 @@ leg2.SetHeader("5 GeV neutrons")
 #leg2.AddEntry(histo,"Cherenk+Scint: RMS90/E="+getRes(histo),"l")
 #leg2.AddEntry(histo1,"Scint: RMS90/E=" + getRes(histo1),"l")
 #leg2.AddEntry(histo2,"Cherenk: RMS90/E="+getRes(histo2) ,"l")
-leg2.AddEntry(histo1,"Scint: #sigma/E=" + b2,"lp")
-leg2.AddEntry(histo2,"Cherenk: #sigma/E="+b3 ,"lp")
-leg2.AddEntry(histo,"Cherenk+Scint: #sigma/E="+b1,"lp")
+leg2.AddEntry(histo1,"Scint: #sigma/E=" + b1,"lp")
+leg2.AddEntry(histo2,"Cherenk: #sigma/E="+b2 ,"lp")
+leg2.AddEntry(histo,"Cherenk+Scint: #sigma/E="+b3,"lp")
 
 leg2.Draw("same");
 
