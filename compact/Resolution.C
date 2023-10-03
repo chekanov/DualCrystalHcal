@@ -7,6 +7,7 @@
 #include "TBranch.h"
 #include "TBrowser.h"
 #include "TH2.h"
+#include "TF1.h"
 #include "TMath.h"
 #include "TRandom.h"
 #include "TProfile.h"
@@ -102,7 +103,6 @@ bool isQuartz(float z) {
 
 
 
-
 void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const char* outputfilename ) {
 
 
@@ -127,6 +127,55 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
   //gen particles
   TH1F *hgenPsize = new TH1F("hgenPsize","number of generator particles",600,0.,40000);
   TH1F *hgenPdgID = new TH1F("hgenpdgID","pdgID of generator particles",600,-200,200);
+
+  // get correction factors
+  float Se1, Ce1;
+  std::ifstream in1("histos/correction_e-_1gev.txt");
+  if (!in1) {std::cerr << "Can't open histos/correction_e-_1gev.txt\n"; return 1;}
+  in1 >> Se1 >> Ce1;
+  in1.close();
+  // get correction factors
+  float Se5, Ce5;
+  std::ifstream in5("histos/correction_e-_5gev.txt");
+  if (!in5) {std::cerr << "Can't open histos/correction_e-_5gev.txt\n"; return 1;}
+  in5 >> Se5 >> Ce5;
+  in5.close();
+  // get correction factors
+  float Se10, Ce10;
+  std::ifstream in10("histos/correction_e-_10gev.txt");
+  if (!in10) {std::cerr << "Can't open histos/correction_e-_10gev.txt\n"; return 1;}
+  in10 >> Se10 >> Ce10;
+  in10.close();
+  // get correction factors
+  float Se20, Ce20;
+  std::ifstream in20("histos/correction_e-_20gev.txt");
+  if (!in20) {std::cerr << "Can't open histos/correction_e-_20gev.txt\n"; return 1;}
+  in20 >> Se20 >> Ce20;
+  in20.close();
+  // get correction factor 
+  float Se40, Ce40;
+  std::ifstream in40("histos/correction_e-_40gev.txt");
+  if (!in40) {std::cerr << "Can't open histos/correction_e-_40gev.txt\n"; return 1;}
+  in40 >> Se40 >> Ce40;
+  in40.close();
+
+
+  // get correction factor for kappa 
+  float HSe20, HCe20;
+  std::ifstream inH("histos/correction_pi-_20gev.txt");
+  if (!inH) {std::cerr << "Can't open histos/correction_pi-_20gev.txt\n"; return 1;}
+  inH >> HSe20 >> HCe20;
+  inH.close();
+
+     // calculate kappa
+     // from 10 GeV sample
+     // 43230000 / 60710000 = 0.72 
+     // 2638000  / 4825000 = 0.51 
+      float h_over_e_S=HSe20/Se20; // 0.71; // h/e for scinittilation 
+      float h_over_e_C=HCe20/Ce20; // 54; // h/e for cherenkov 
+      float kappa=(1-h_over_e_S) / (1-h_over_e_C);
+      cout << "Estimated kappa=" << kappa <<  " h_over_e_S=" << h_over_e_S << " h_over_e_C=" << h_over_e_C <<  endl;
+
 
 
   // calorimeter infor
@@ -157,8 +206,10 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
   // max value for multiplicity
   float maxCherenkov=5000000.;
   float maxScintil=5000000.;
-  if (beamE ==10)  maxScintil=maxScintil*10; 
-  if (beamE ==20)  maxScintil=maxScintil*100; 
+  if (beamE ==5)  maxScintil=maxScintil*10;
+  if (beamE ==10)  maxScintil=maxScintil*20;
+  if (beamE ==20)  maxScintil=maxScintil*100;
+  if (beamE ==40)  maxScintil=maxScintil*200;
 
   TH2F *depos_scintil = new TH2F("depos_scintil","NScintilation vs Depos", 1000,0.,100., 1000, 0.0, maxScintil);
   TH2F *depos_cherenk = new TH2F("depos_cherenk","Cherenkov vs Depos",     1000,0.,100., 1000, 0.0,  maxCherenkov);
@@ -591,11 +642,12 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
 
       // reconstructed from Scintillation
       // this calibration found using e- guns 0.5 GeV
-      float calibration_scint= (0.5*1000)/328400;
-      if (beamE ==1)  calibration_scint= (1.0*1000)/662700;
-      if (beamE ==5)  calibration_scint= (5.0*1000)/3337000;
-      if (beamE ==10)  calibration_scint= (10.0*1000)/6677000;
-      if (beamE ==20)  calibration_scint= (20.0*1000)/13370000;
+      float calibration_scint= (0.5*1000)/Se1;
+      if (beamE ==1)  calibration_scint= (1.0*1000)/Se1;
+      if (beamE ==5)  calibration_scint= (5.0*1000)/Se5;
+      if (beamE ==10)  calibration_scint= (10.0*1000)/Se10;
+      if (beamE ==20)  calibration_scint= (20.0*1000)/Se20;
+      if (beamE ==40)  calibration_scint= (40.0*1000)/Se40;
 
       float energy_scint = calibration_scint * nscinttot;
       heest_scint->Fill(energy_scint / mainee);
@@ -605,11 +657,12 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
       // corrected energy for Scinitallation + Cherenkov 
       // https://arxiv.org/pdf/0707.4021.pdf
       // this calibration found using e- guns 0.5 GeV 
-      float calibration_cherenkov = (0.5*1000)/136900; 
-      if (beamE ==1)   calibration_cherenkov= (1.0*1000)/27660;
-      if (beamE ==5)   calibration_cherenkov= (5.0*1000)/140500;
-      if (beamE ==10)  calibration_cherenkov= (10.0*1000)/281900;
-      if (beamE ==20)  calibration_cherenkov= (20.0*1000)/562800;
+      float calibration_cherenkov = (0.5*1000)/Se1;
+      if (beamE ==1)   calibration_cherenkov= (1.0*1000)/Ce1;
+      if (beamE ==5)   calibration_cherenkov= (5.0*1000)/Ce5;
+      if (beamE ==10)  calibration_cherenkov= (10.0*1000)/Ce10;
+      if (beamE ==20)  calibration_cherenkov= (20.0*1000)/Ce20;
+      if (beamE ==40)  calibration_cherenkov= (40.0*1000)/Ce40;
 
       float energy_cherenkov = calibration_cherenkov * ncertot;
       heest_cherenk->Fill(energy_cherenkov / mainee);
@@ -674,11 +727,11 @@ void Resolution(int num_evtsmax, const char* inputfilename, float beamE, const c
        // from 10 GeV sample
        // 4800000 / 6677000 = 0.72 
        // 142800  / 281900 = 0.51 
-      float h_over_e_S=0.72; // h/e for scinittilation 
-      float h_over_e_C=0.51; // h/e for cherenkov 
+      //float h_over_e_S=0.72; // h/e for scinittilation 
+      //float h_over_e_C=0.51; // h/e for cherenkov 
       //float kappa=(1-h_over_e_S) / (1-h_over_e_C);
- 
-      float kappa=0.571; 
+      //float kappa=0.571; 
+
       float a1=( energy_scint - kappa * energy_cherenkov);
       float a2= 1 - kappa;
 

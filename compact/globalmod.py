@@ -1,5 +1,3 @@
-# Global module
-
 from math import sqrt,acos,exp
 from array import array
 from ROOT import gROOT,gPad,gStyle,TCanvas,TSpline3,TFile,TLine,TLatex,TAxis,TLegend,TPostScript
@@ -7,6 +5,9 @@ from ROOT import TH2D,TArrow,TCut,TPad,TH1D,TF1,TObject,TPaveText,TGraph,TGraphE
 from ROOT import TMath, TGraph2D,TTree,TMultiGraph,TBranch,gSystem,gDirectory
 from ROOT import TPaveStats
 import random
+
+
+ModuleName="40L-PFQ"
 
 # par[1] - mean
 # par[2] - sigma
@@ -34,35 +35,6 @@ def TH1toTGraphError(h1, shiftX=1.0):
 
     # g1->Print();
     return g1
-
-
-def TH1correctError(h1, scale):
-    for i in range(h1.GetNbinsX()):
-        y = h1.GetBinContent(i+1)
-        ey=h1.GetBinError(i+1)
-        x=h1.GetBinCenter(i+1)
-        # ex=h1.GetBinWidth(i+1)
-        # h1.SetBinContent(i+1,y)
-        # h1.SetBinError(i+1,ey)
-        if (x>0.1): continue
-        if (y > 0):
-            h1.SetBinError(i+1, ey*scale )
-        else:
-            h1.SetBinError(i+1, 0)
-
-def getFit(hh, color=1):
-    mean=hh.GetMean()
-    sigma=hh.GetRMS()
-    f1 = TF1("g0","gaus",mean-3*sigma, mean+3*sigma);
-    f1.SetParameter(0,200)
-    f1.SetParameter(1,mean)
-    f1.SetParameter(2,sigma)
-    f1.SetLineColor(color)
-    hh.Fit(f1,"RM");
-    par1 = f1.GetParameters()
-    err1 = f1.GetParErrors()
-    b1='%.3f #pm %.3f'%( par1[2]/par1[1], err1[2]/par1[1]  )
-    return b1
 
 
 # 90% RMS
@@ -100,6 +72,38 @@ def rms90(h):
    result = TMath.Sqrt(rms2)
    # print ("RMS of central 90% = ",result, " RMS total =",h.GetRMS());
    return 1.25*result
+
+# get resolution as RMS90
+def getRes(hh):
+      RMS=rms90(hh);
+      #RMS=hh.GetRMS()
+      ERR=hh.GetRMSError()
+      MEAN=hh.GetMean()
+      MEAN_ERR=hh.GetMeanError()
+      res=RMS/MEAN
+      err=MEAN_ERR/MEAN
+      a1='%.3f'%( res )
+      b1='%.3f'%( err )
+      return a1+"#pm"+b1
+
+# get resolution from the fit
+def getFit(hh, color=1):
+    mean=hh.GetMean()
+    sigma=hh.GetRMS()
+    f1 = TF1("g0","gaus",mean-3*sigma, mean+3*sigma);
+    f1.SetParameter(0,200)
+    f1.SetParameter(1,mean)
+    f1.SetParameter(2,sigma)
+    f1.SetLineColor(color)
+    hh.Fit(f1,"RM");
+    chi2= f1.GetChisquare()
+    ndf=f1.GetNDF()
+    print ("Chi2=", chi2," ndf=",ndf, " chi2/ndf=",chi2/ndf) 
+    par1 = f1.GetParameters()
+    err1 = f1.GetParErrors()
+    b1='%.3f #pm %.3f'%( par1[2]/par1[1], err1[2]/par1[1]  )
+    return b1
+
 
 
 def myText(x,y,color=1,size=0.08,text=""):
